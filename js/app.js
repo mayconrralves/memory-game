@@ -2,7 +2,7 @@
  * Create a list that holds all of your cards
  */
 
-
+const listTypeCards = ["fa-diamond","fa-paper-plane-o","fa-anchor","fa-bolt","fa-cube","fa-leaf","fa-bicycle","fa-bomb"];
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -31,8 +31,96 @@ function shuffle(array) {
  *  - display the card's symbol (put this functionality in another function that you call from this one)
  *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
+ *   
+  + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
  *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+ //constroi o deck com 16 cards embaralhados
+function constructionDeck(array) {
+	let cards =[];
+	for(let i=0; i < array.length; i++)
+		//dobra o número de cards
+		cards.push(array[i], array[i]);
+	return shuffle(cards);
+}
+
+//adiciona id ao array de cards abertos
+function addIdList(id,idList){
+	if(!id)
+		return
+	if($("#"+id).hasClass("match"))
+		return;
+	idList.push(id);
+}
+//abre o card escolhido
+function openCard(id,cards) {
+	$("#"+id).children().addClass(cards[id]);
+	$("#"+id).addClass("open show");
+}
+//fecha os cards
+function closeCard(id,cards) {
+	$("#"+id).children().removeClass(cards[id]);
+	$("#"+id).removeClass("open show");
+}
+
+//define os cards que não serão mais abertos
+function addMatch(id) {
+	$("#"+id[0]).addClass("match");
+	$("#"+id[0]).removeClass("open show");
+	$("#"+id[1]).addClass("match");
+	$("#"+id[1]).removeClass("open show");
+}
+
+//verifica se dois cards são iguais
+function verifyCombination(idList, cards) {
+	if(idList.length === 2) {
+		if(idList[0]===idList[1]) {
+			idList.length = 1;
+			return;
+		}
+		if (cards[idList[0]] === cards[idList[1]]) {
+			addMatch(idList);
+			idList.length=0;
+
+		}
+		else {
+			setTimeout(function(){
+				closeCard(idList[0], cards);
+				closeCard(idList[1], cards);
+				idList.length=0;
+			},400);
+		}
+		
+	}
+}
+
+//adiciona os cards a interface
+function constructionGameInterface(array) {
+	for(let i=0; i < array.length; i++)
+		$(".deck").append("<li class='card' id='"+i+"'><i class='fa'></i></li>");
+}
+
+//inicia o jogo
+function initGame(){
+	//array com os cards do baralho
+	let cards = shuffle(constructionDeck(listTypeCards));
+	//cards
+	let idList = [];
+	constructionGameInterface(cards);
+	console.log(cards);
+
+	$(".deck").on("click",function(event) {
+		if(idList.length<2){
+			addIdList(event.target.id,idList);
+			console.log(idList);
+			openCard(idList[idList.length-1],cards);
+			verifyCombination(idList,cards);
+		}
+
+	});
+	
+}
+
+initGame();
