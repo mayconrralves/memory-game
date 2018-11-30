@@ -54,11 +54,13 @@ function addIdList(id,idList){
 		return;
 	idList.push(id);
 }
+
 //abre o card escolhido
 function openCard(id,cards) {
 	$("#"+id).children().addClass(cards[id]);
 	$("#"+id).addClass("open show");
 }
+
 //fecha os cards
 function closeCard(id,cards) {
 	$("#"+id).children().removeClass(cards[id]);
@@ -95,6 +97,15 @@ function verifyCombination(idList, cards) {
 		
 	}
 }
+//função resnposável por capturar os cliques
+function cardClick(event, idList, cards){
+	if(idList.length<2){
+			addIdList(event.target.id,idList);
+			console.log(idList);
+			openCard(idList[idList.length-1],cards);
+			verifyCombination(idList,cards);
+		}
+}
 
 //adiciona os cards a interface
 function constructionGameInterface(array) {
@@ -102,25 +113,68 @@ function constructionGameInterface(array) {
 		$(".deck").append("<li class='card' id='"+i+"'><i class='fa'></i></li>");
 }
 
-//inicia o jogo
-function initGame(){
-	//array com os cards do baralho
-	let cards = shuffle(constructionDeck(listTypeCards));
-	//cards
-	let idList = [];
-	constructionGameInterface(cards);
-	console.log(cards);
-
-	$(".deck").on("click",function(event) {
-		if(idList.length<2){
-			addIdList(event.target.id,idList);
-			console.log(idList);
-			openCard(idList[idList.length-1],cards);
-			verifyCombination(idList,cards);
-		}
-
-	});
-	
+function clock(count) {
+	let seg = count%60;
+	let min = parseInt(count/60);
+	if(count > -1) {
+		if(seg < 10)
+			seg = "0"+ seg;
+		if(min < 10)
+			min="0" + min;
+		$(".clock").html(min+":"+seg);
+		setTimeout(function(){
+			clock(count);
+		},1000);
+		count--;
+					
+	}
+	if(count==0)
+		endGame;
 }
 
-initGame();
+function initTime(minute, second){
+	clock(minute*60+second);
+}
+
+//termina o jogo
+function endGame(){
+
+}
+
+//inicia o jogo
+function initGame(cards, idList, minute, second){
+	cards = constructionDeck(listTypeCards);
+	idList = [];
+	constructionGameInterface(cards);
+	initTime(minute, second);
+
+
+}
+
+//reinicia jogo
+function restart(cards,idList, minute, second){
+	$(".deck").html("");
+	initGame(cards, idList, minute, second);
+
+}
+
+$(document).ready(function(){
+	//array com os cards do baralho
+	let cards = constructionDeck(listTypeCards);
+	//cards abertos
+	let idList = [];
+	//tempo máximo do jogo
+	let minute = 0;
+	let second = 10;
+	
+	$(".deck").on("click",function(event){
+		cardClick(event, idList, cards)
+	});
+
+	$(".restart").on("click", function(event){
+		restart();
+	});
+	//inicia o jogo
+ 	initGame(cards, idList,  minute, second);
+	
+});
