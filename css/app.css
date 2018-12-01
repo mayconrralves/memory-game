@@ -98,9 +98,13 @@ h1 {
     margin: 0 5px 0 0;
 }
 
+
 .score-panel .stars li {
     list-style: none;
     display: inline-block;
+}
+.score-panel .stars .star-blue{
+    color: blue;
 }
 
 .score-panel .restart {

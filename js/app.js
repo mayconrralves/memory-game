@@ -4,8 +4,11 @@
 
 const listTypeCards = ["fa-diamond","fa-paper-plane-o","fa-anchor","fa-bolt","fa-cube","fa-leaf","fa-bicycle","fa-bomb"];
 //variaveis globais para o relogio
-var count;
+var watch;
 var time;
+var maxTime;
+//varialvel para contar quantas estrelas serão exibidas
+var stars;
 
 /*
  * Display the cards on the page
@@ -61,6 +64,7 @@ function addIdList(id,idList){
 
 //abre o card escolhido
 function openCard(id,cards) {
+
 	$("#"+id).children().addClass(cards[id]);
 	$("#"+id).addClass("open show");
 }
@@ -104,10 +108,26 @@ function verifyCombination(idList, cards) {
 //função resnposável por capturar os cliques
 function cardClick(event, idList, cards){
 	if(idList.length<2){
+			console.log($(this).attr("class"));
 			addIdList(event.target.id,idList);
 			openCard(idList[idList.length-1],cards);
 			verifyCombination(idList,cards);
 		}
+}
+//inicia as estrelas para pontuação
+function initStars(){
+	for(let i=0; i < 3; i++) {
+		$(".stars").append("<li><i class='fa fa-star star-blue'></i></li>");
+	}
+}
+
+function calcStars(){
+	let stars = $(".fa-star");
+	if(time < maxTime/3){
+		$(stars[1]).removeClass("star-blue");
+	}
+	else if (time < maxTime/1.5)
+		$(stars[2]).removeClass("star-blue");
 }
 
 //adiciona os cards a interface
@@ -119,7 +139,6 @@ function clock() {
 	let seg = time%60;
 	let min = parseInt(time/60);
 	if(time > -1) {
-		flag = 1;
 		if(seg < 10)
 			seg = "0"+ seg;
 		if(min < 10)
@@ -135,12 +154,15 @@ function clock() {
 
 function initTime(minute, second){
 	time = minute*60+second;
-	count = setInterval(clock, 1000);
+	watch = setInterval(clock, 1000);
+	stars = setInterval(calcStars);
 }
 
 //termina o jogo
 function endGame(){
-	clearInterval(count);
+
+	clearInterval(stars);
+	clearInterval(watch);
 }
 
 //inicia o jogo
@@ -148,15 +170,20 @@ function initGame(cards, idList, minute, second){
 	cards = constructionDeck(listTypeCards);
 	idList = [];
 	constructionGameInterface(cards);
+	initStars();
 	initTime(minute, second);
+	calcStars(minute,second);
 
 
 }
 
 //reinicia jogo
 function restart(cards,idList, minute, second){
-	clearInterval(count);
 	$(".deck").html("");
+	$(".stars").html("");
+	clearInterval(stars);
+	clearInterval(watch);
+	
 	initGame(cards, idList, minute, second);
 
 }
@@ -167,8 +194,9 @@ $(document).ready(function(){
 	//cards abertos
 	let idList = [];
 	//tempo máximo do jogo
-	let minute = 0;
-	let second = 10;
+	let minute = 1;
+	let second = 30;
+	maxTime = minute*60+second;
 	
 	$(".deck").on("click",function(event){
 		cardClick(event, idList, cards)
