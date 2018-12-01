@@ -3,6 +3,10 @@
  */
 
 const listTypeCards = ["fa-diamond","fa-paper-plane-o","fa-anchor","fa-bolt","fa-cube","fa-leaf","fa-bicycle","fa-bomb"];
+//variaveis globais para o relogio
+var count;
+var time;
+
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -34,7 +38,7 @@ function shuffle(array) {
  *   
   + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
  *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
+ *    + increment the move timeer and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
  //constroi o deck com 16 cards embaralhados
@@ -101,7 +105,6 @@ function verifyCombination(idList, cards) {
 function cardClick(event, idList, cards){
 	if(idList.length<2){
 			addIdList(event.target.id,idList);
-			console.log(idList);
 			openCard(idList[idList.length-1],cards);
 			verifyCombination(idList,cards);
 		}
@@ -112,33 +115,32 @@ function constructionGameInterface(array) {
 	for(let i=0; i < array.length; i++)
 		$(".deck").append("<li class='card' id='"+i+"'><i class='fa'></i></li>");
 }
-
-function clock(count) {
-	let seg = count%60;
-	let min = parseInt(count/60);
-	if(count > -1) {
+function clock() {
+	let seg = time%60;
+	let min = parseInt(time/60);
+	if(time > -1) {
+		flag = 1;
 		if(seg < 10)
 			seg = "0"+ seg;
 		if(min < 10)
 			min="0" + min;
 		$(".clock").html(min+":"+seg);
-		setTimeout(function(){
-			clock(count);
-		},1000);
-		count--;
+		time--;
 					
 	}
-	if(count==0)
-		endGame;
+	if(time < 0){
+		endGame();
+	}
 }
 
 function initTime(minute, second){
-	clock(minute*60+second);
+	time = minute*60+second;
+	count = setInterval(clock, 1000);
 }
 
 //termina o jogo
 function endGame(){
-
+	clearInterval(count);
 }
 
 //inicia o jogo
@@ -153,6 +155,7 @@ function initGame(cards, idList, minute, second){
 
 //reinicia jogo
 function restart(cards,idList, minute, second){
+	clearInterval(count);
 	$(".deck").html("");
 	initGame(cards, idList, minute, second);
 
@@ -172,7 +175,7 @@ $(document).ready(function(){
 	});
 
 	$(".restart").on("click", function(event){
-		restart();
+		restart(cards, idList, minute, second);
 	});
 	//inicia o jogo
  	initGame(cards, idList,  minute, second);
