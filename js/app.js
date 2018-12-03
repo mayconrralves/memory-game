@@ -10,6 +10,12 @@ var maxTime;
 var stars;
 //variável para contar movimentos
 var moves;
+//variável para calcular a pontuação;
+var score;
+//variável que armazena o número de pares revelados
+var pairShow;
+//variável para o deck de cartas
+var cards = [];
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -39,13 +45,13 @@ function addIdList(id,idList) {
 	idList.push(id);
 }
 //abre o card escolhido
-function openCard(id,cards) {
+function openCard(id) {
 
 	$("#"+id).children().addClass(cards[id]);
 	$("#"+id).addClass("open show");
 }
 //fecha os cards
-function closeCard(id,cards) {
+function closeCard(id) {
 	$("#"+id).children().removeClass(cards[id]);
 	$("#"+id).removeClass("open show");
 }
@@ -57,13 +63,15 @@ function addMatch(id) {
 	$("#"+id[1]).removeClass("open show");
 }
 //verifica se dois cards são iguais
-function verifyCombination(idList, cards) {
+function verifyCombination(idList) {
 	if(idList.length === 2) {
 		if(idList[0]===idList[1]) {
 			idList.length = 1;
 			return;
 		}
 		if (cards[idList[0]] === cards[idList[1]]) {
+			calcPairShow();
+			countScore();
 			addMatch(idList);
 			idList.length=0;
 		}
@@ -78,7 +86,7 @@ function verifyCombination(idList, cards) {
 	}
 }
 //função resnposável por capturar os cliques
-function cardClick(event, idList, cards) {
+function cardClick(event, idList) {
 	if(idList.length<2){
 			addIdList(event.target.id,idList);
 			openCard(idList[idList.length-1],cards);
@@ -94,12 +102,12 @@ function initStars() {
 //calcula a quantidade de estrelas
 function calcStars() {
 	let stars = $(".fa-star");
-	if(moves > 30)
+	if(moves > 25)
 		return;
-	if(moves == 18){
+	if(moves == 16){
 		$(stars[2]).removeClass("star-blue");
 	}
-	else if (moves == 30)
+	else if (moves == 25)
 		$(stars[1]).removeClass("star-blue");
 }
 //inicializa estrelas
@@ -112,9 +120,25 @@ function countMoves() {
 		moves++;
 		$(".moves").html(moves);
 }
+//incializa o score;
+function initScore() {
+	score = 0;
+}
+//inicializa o numero de pares corretos
+function initPairShow() {
+	pairShow = 0;
+}
+function calcPairShow(){
+	pairShow++;
+}
+//calcula o score
+function countScore() {
+	score += stars*time;
+}
 //adiciona os cards a interface
-function constructionGameInterface(array) {
-	for(let i=0; i < array.length; i++)
+function constructionGameInterface() {
+	$(".deck").html("");
+	for(let i=0; i < cards.length; i++)
 		$(".deck").append("<li class='card' id='"+i+"'><i class='fa'></i></li>");
 }
 //função para o relógio
@@ -146,25 +170,26 @@ function endGame() {
 	clearInterval(watch);
 }
 //inicia o jogo
-function initGame(cards, idList, minute, second) {
+function initGame(idList, minute, second) {
 	cards = constructionDeck(listTypeCards);
+	console.log(cards);
 	idList = [];
-	constructionGameInterface(cards);
+	constructionGameInterface();
+	initScore();
+	initPairShow();
 	initStars();
 	initTime(minute, second);
 	calcStars(minute,second);
 }
 //reinicia jogo
-function restart(cards,idList, minute, second) {
+function restart(idList, minute, second) {
 	$(".deck").html("");
 	$(".stars").html("");
 	clearInterval(stars);
 	clearInterval(watch);
-	initGame(cards, idList, minute, second);
+	initGame(idList, minute, second);
 }
 $(document).ready(function() {
-	//array com os cards do baralho
-	let cards = constructionDeck(listTypeCards);
 	//cards abertos
 	let idList = [];
 	//tempo máximo do jogo
@@ -175,7 +200,7 @@ $(document).ready(function() {
 		cardClick(event, idList, cards)
 	});
 	$(".restart").on("click", function(event) {
-		restart(cards, idList, minute, second);
+		restart(idList, minute, second);
 	});
- 	initGame(cards, idList,  minute, second);
+ 	initGame(idList,  minute, second);
 });
