@@ -115,3 +115,8 @@ h1 {
 .clock {
     padding-left: 70px;
 }
+
+.moves {
+    padding-left: 20px;
+    padding-right: 3px;
+}

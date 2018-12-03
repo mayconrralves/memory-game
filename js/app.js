@@ -9,13 +9,8 @@ var time;
 var maxTime;
 //varialvel para contar quantas estrelas serão exibidas
 var stars;
-
-/*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
- */
+//variavel para contar movimentos
+var moves;
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -32,18 +27,6 @@ function shuffle(array) {
     return array;
 }
 
-
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *   
-  + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move timeer and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
  //constroi o deck com 16 cards embaralhados
 function constructionDeck(array) {
 	let cards =[];
@@ -102,13 +85,13 @@ function verifyCombination(idList, cards) {
 				idList.length=0;
 			},400);
 		}
+		countMoves();
 		
 	}
 }
 //função resnposável por capturar os cliques
 function cardClick(event, idList, cards){
 	if(idList.length<2){
-			console.log($(this).attr("class"));
 			addIdList(event.target.id,idList);
 			openCard(idList[idList.length-1],cards);
 			verifyCombination(idList,cards);
@@ -120,7 +103,7 @@ function initStars(){
 		$(".stars").append("<li><i class='fa fa-star star-blue'></i></li>");
 	}
 }
-
+//calcula a quantidade de estrelas
 function calcStars(){
 	let stars = $(".fa-star");
 	if(time < maxTime/3){
@@ -128,6 +111,17 @@ function calcStars(){
 	}
 	else if (time < maxTime/1.5)
 		$(stars[2]).removeClass("star-blue");
+}
+//inicializa estrelas
+function initMoves(){
+	moves = 0;
+	$(".moves").html(moves);
+}
+//conta quantos movimentos foram feitos
+function countMoves(){
+		moves++;
+		$(".moves").html(moves);
+	
 }
 
 //adiciona os cards a interface
@@ -154,6 +148,7 @@ function clock() {
 
 function initTime(minute, second){
 	time = minute*60+second;
+	initMoves();
 	watch = setInterval(clock, 1000);
 	stars = setInterval(calcStars);
 }
@@ -173,6 +168,7 @@ function initGame(cards, idList, minute, second){
 	initStars();
 	initTime(minute, second);
 	calcStars(minute,second);
+
 
 
 }
