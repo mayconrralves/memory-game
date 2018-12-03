@@ -71,8 +71,8 @@ function verifyCombination(idList) {
 		}
 		if (cards[idList[0]] === cards[idList[1]]) {
 			calcPairShow();
-			countScore();
 			addMatch(idList);
+			countScore();
 			idList.length=0;
 		}
 		else {
@@ -120,16 +120,16 @@ function countMoves() {
 		moves++;
 		$(".moves").html(moves);
 }
-//incializa o score;
-function initScore() {
-	score = 0;
-}
 //inicializa o numero de pares corretos
 function initPairShow() {
 	pairShow = 0;
 }
 function calcPairShow(){
 	pairShow++;
+}
+//incializa o score;
+function initScore() {
+	score = 0;
 }
 //calcula o score
 function countScore() {
@@ -172,7 +172,6 @@ function endGame() {
 //inicia o jogo
 function initGame(idList, minute, second) {
 	cards = constructionDeck(listTypeCards);
-	console.log(cards);
 	idList = [];
 	constructionGameInterface();
 	initScore();
