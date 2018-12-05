@@ -194,14 +194,17 @@ function restart(idList, minute, second) {
 	endGame();
 	initGame(idList, minute, second);
 }
-
 function modalLoseShow(){
-	console.log("ok");
 	$("#modal-lose").css("display","block");
 }
 function modalVictoryShow(){
-	console.log("ok");
 	$("#modal-victory").css("display","block");
+}
+function modalLoseClose(){
+	$("#modal-lose").css("display","none");
+}
+function modalVictoryClose(){
+	$("#modal-victory").css("display","none");
 }
 
 $(document).ready(function() {
@@ -214,7 +217,7 @@ $(document).ready(function() {
 	$(".deck").on("click",function(event) {
 		cardClick(event, idList, cards);
 		if(pairShow===8){
-			console.log("venceu");
+			modalVictoryShow();
 			endGame();
 		}
 	});
@@ -223,7 +226,10 @@ $(document).ready(function() {
 	});
 
 	$(".btn-close").on("click",  function(event){
-		$("#modal-lose").css("display","none");
+		if($(event.target).parent().parent().attr("id")==="modal-lose")
+			modalLoseClose();
+		else if($(event.target).parent().parent().attr("id")==="modal-victory")
+			modalVictoryClose();
 		restart(idList,minute,second);
 });
  	initGame(idList,  minute, second);
