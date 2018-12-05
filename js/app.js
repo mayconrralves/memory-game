@@ -16,6 +16,8 @@ var score;
 var pairShow;
 //variável para o deck de cartas
 var cards = [];
+//mantem o relógio do jogo atual;
+var game;
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -153,7 +155,9 @@ function clock() {
 		$(".clock").html(min+":"+seg);
 		time--;				
 	}
-	if(time < 0){
+	if(time < 0) {
+		if(pairShow !==8)
+			modalLoseShow();
 		endGame();
 	}
 }
@@ -163,11 +167,13 @@ function initTime(minute, second) {
 	initMoves();
 	watch = setInterval(clock, 1000);
 	stars = setInterval(calcStars);
+	
 }
 //termina o jogo
 function endGame() {
 	clearInterval(stars);
 	clearInterval(watch);
+	clearTimeout(gameTime);
 }
 //inicia o jogo
 function initGame(idList, minute, second) {
@@ -179,27 +185,46 @@ function initGame(idList, minute, second) {
 	initStars();
 	initTime(minute, second);
 	calcStars(minute,second);
+	gameTime = setTimeout(endGame,(maxTime+1)*1000);
 }
 //reinicia jogo
 function restart(idList, minute, second) {
 	$(".deck").html("");
 	$(".stars").html("");
-	clearInterval(stars);
-	clearInterval(watch);
+	endGame();
 	initGame(idList, minute, second);
 }
+
+function modalLoseShow(){
+	console.log("ok");
+	$("#modal-lose").css("display","block");
+}
+function modalVictoryShow(){
+	console.log("ok");
+	$("#modal-victory").css("display","block");
+}
+
 $(document).ready(function() {
 	//cards abertos
 	let idList = [];
 	//tempo máximo do jogo
-	let minute = 1;
-	let second = 30;
+	let minute = 0;
+	let second = 50;
 	maxTime = minute*60+second;
 	$(".deck").on("click",function(event) {
-		cardClick(event, idList, cards)
+		cardClick(event, idList, cards);
+		if(pairShow===8){
+			console.log("venceu");
+			endGame();
+		}
 	});
 	$(".restart").on("click", function(event) {
 		restart(idList, minute, second);
 	});
+
+	$(".btn-close").on("click",  function(event){
+		$("#modal-lose").css("display","none");
+		restart(idList,minute,second);
+});
  	initGame(idList,  minute, second);
 });
