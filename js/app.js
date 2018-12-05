@@ -198,6 +198,15 @@ function modalLoseShow(){
 	$("#modal-lose").css("display","block");
 }
 function modalVictoryShow(){
+	$(".result").html("");
+	$(".result").append("<p>Você Ganhou!!!</p>");
+	$(".result p").after("<ul class='stars'></ul>");
+	console.log(maxTime);
+	$(".result ul").before("<p>Duração da partida: "+(maxTime-time)+" segs</p>");
+	$(".result ul").after("<p>Score: "+score+"</p>");
+	let len = $(".star-blue").length;
+	for(let i=0; i < len ;i++)
+		$("#modal-victory .modal-content ul").append("<li><i class='fa fa-star star-blue'></i></li>");	
 	$("#modal-victory").css("display","block");
 }
 function modalLoseClose(){
@@ -211,8 +220,8 @@ $(document).ready(function() {
 	//cards abertos
 	let idList = [];
 	//tempo máximo do jogo
-	let minute = 0;
-	let second = 50;
+	let minute = 1;
+	let second = 30;
 	maxTime = minute*60+second;
 	$(".deck").on("click",function(event) {
 		cardClick(event, idList, cards);
@@ -226,9 +235,11 @@ $(document).ready(function() {
 	});
 
 	$(".btn-close").on("click",  function(event){
-		if($(event.target).parent().parent().attr("id")==="modal-lose")
+		let modal = $(event.target).parent().parent().attr("id");
+		console.log(modal);
+		if(modal ==="modal-lose")
 			modalLoseClose();
-		else if($(event.target).parent().parent().attr("id")==="modal-victory")
+		else if(modal==="modal-victory")
 			modalVictoryClose();
 		restart(idList,minute,second);
 });
