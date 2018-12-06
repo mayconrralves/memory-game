@@ -1,7 +1,7 @@
 # Memory Game Project
 
 ## Instalação e Execução
-1. Baixar o arquivo zip do jogo em [aqui](https://github.com/mayconrralves/memory-game.git)
+1. Baixar o arquivo zip do jogo;
 2. Descompactar o arquivo zip e acessar a pasta do jogo;
 3. Clicar em index.html
 ## Dependências:
