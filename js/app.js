@@ -1,6 +1,7 @@
 /*
  * Create a list that holds all of your cards
  */
+ "use strict"
 const listTypeCards = ["fa-diamond","fa-paper-plane-o","fa-anchor","fa-bolt","fa-cube","fa-leaf","fa-bicycle","fa-bomb"];
 //variáveis globais para o relógio
 var watch;
@@ -16,8 +17,8 @@ var score;
 var pairShow;
 //variável para o deck de cartas
 var cards = [];
-//mantem o relógio do jogo atual;
-var game;
+//mantém o relógio do jogo atual;
+var gameTime;
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -32,11 +33,7 @@ function shuffle(array) {
 }
  //constroi o deck com 16 cards embaralhados
 function constructionDeck(array) {
-	let cards =[];
-	for(let i=0; i < array.length; i++)
-		//dobra o número de cards
-		cards.push(array[i], array[i]);
-	return shuffle(cards);
+	return shuffle([...array, ...array]);
 }
 //adiciona id ao array de cards abertos
 function addIdList(id,idList) {
@@ -67,7 +64,7 @@ function addMatch(id) {
 //verifica se dois cards são iguais
 function verifyCombination(idList) {
 	if(idList.length === 2) {
-		if(idList[0]===idList[1]) {
+		if(idList[0] === idList[1]) {
 			idList.length = 1;
 			return;
 		}
@@ -75,13 +72,13 @@ function verifyCombination(idList) {
 			calcPairShow();
 			addMatch(idList);
 			countScore();
-			idList.length=0;
+			idList.length = 0;
 		}
 		else {
 			setTimeout(function(){
 				closeCard(idList[0], cards);
 				closeCard(idList[1], cards);
-				idList.length=0;
+				idList.length = 0;
 			},400);
 		}
 		countMoves();
@@ -89,7 +86,7 @@ function verifyCombination(idList) {
 }
 //função resnposável por capturar os cliques
 function cardClick(event, idList) {
-	if(idList.length<2){
+	if(idList.length < 2){
 			addIdList(event.target.id,idList);
 			openCard(idList[idList.length-1],cards);
 			verifyCombination(idList,cards);
@@ -106,10 +103,10 @@ function calcStars() {
 	let stars = $(".fa-star");
 	if(moves > 25)
 		return;
-	if(moves == 16){
+	if(moves === 16){
 		$(stars[2]).removeClass("star-blue");
 	}
-	else if (moves == 25)
+	else if (moves === 25)
 		$(stars[1]).removeClass("star-blue");
 }
 //inicializa estrelas
@@ -201,7 +198,6 @@ function modalVictoryShow(){
 	$(".result").html("");
 	$(".result").append("<p>Você Ganhou!!!</p>");
 	$(".result p").after("<ul class='stars'></ul>");
-	console.log(maxTime);
 	$(".result ul").before("<p>Duração da partida: "+(maxTime-time)+" segs</p>");
 	$(".result ul").after("<p>Score: "+score+"</p>");
 	let len = $(".star-blue").length;
