@@ -125,7 +125,8 @@ h1 {
 #modal-lose, #modal-victory {
     display: none;
     position: fixed;
-    padding-top: 14%;
+    padding-top: 12%;
+    padding-bottom: 4%;
     left: 0;    
     top: 0;
     width: 100%;
@@ -148,13 +149,13 @@ h1 {
 }
 
 .modal-content p {
-    font-size: 3.2em;
+    font-size: 3em;
     font-family: 'Unlock',Arial;
     color: #ff0000;
 }
 
 .modal-content .stars {
-    font-size: 4em;
+    font-size: 3.8em;
 }
 
 .btn-close {
